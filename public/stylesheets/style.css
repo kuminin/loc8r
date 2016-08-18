@@ -1,0 +1,15 @@
+.review {
+    padding-bottom: 5px;
+}
+.panel-body.reveiw-container {
+    padding-top: 0px;
+}
+.review-header {
+    margin-bottom: 10px;
+}
+.rewviewAuthor {
+    margin: 0 5px;
+}
+.reviewTimestamp {
+    color: #ccc;
+}
