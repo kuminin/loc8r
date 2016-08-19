@@ -1,3 +1,4 @@
+include _includes/sharedHTMLfunctions
 extends layout
 
 block content
@@ -14,9 +15,7 @@ block content
               h4
                 a(href="/location")= location.name
                 small &nbsp;
-                  - for (var i = 1; i <= location.rating; i++)
-                    span.glyphicon.glyphicon-star
-                  - for (var i = location.rating; i < 5; i++)
+                  +outputRating(location.rating)
                     span.glyphicon.glyphicon-star-empty
                 span.badge.pull-right.badge-default= location.distance
               p.address= location.address
