@@ -18,11 +18,24 @@ var theEarth = (function() {
     };
 })();
 
+var meterConversion = (function() {
+    var mToKm = function(distance) {
+        return parseFloat(distance / 1000);
+    };
+    var kmToM = function(distance) {
+        return parseFloat(distance * 1000);
+    };
+    return {
+        mToKm : mToKm,
+        kmToM : kmToM
+    };
+})();
+
 var buildLocations = function(results) {
     var locations = [];
     results.forEach(function(doc) {
         locations.push({
-            distance: theEarth.getDistanceFromRads(doc.dis),
+            distance: meterConversion.mToKm(doc.dis),
             name: doc.obj.name,
             address: doc.obj.address,
             rating: doc.obj.rating,
@@ -30,6 +43,7 @@ var buildLocations = function(results) {
             _id: doc.obj._id
         });
     });
+    return locations;
 };
 
 var sendJsonResponse = function(res, status, content) {
@@ -41,21 +55,28 @@ module.exports.locationsListByDistance = function(req, res) {
     var lng = parseFloat(req.query.lng);
     var lat = parseFloat(req.query.lat);
     var maxDistance = parseFloat(req.query.maxDistance);
-    var point = {
-        type: "Point",
-        coordinates: [lng, lat]
-    };
-    var geoOptions = {
-        spherical: true,
-        maxDistance: theEarth.getRadsFromDistance(maxDistance),
-        limit: 10
-    };
+    // var geoOptions = {
+    //     spherical: true,
+    //     maxDistance: theEarth.getRadsFromDistance(maxDistance),
+    //     limit: 10
+    // };
     if (!lng || !lat || !maxDistance) {
         sendJsonResponse(res, 404, {
             "message": "lng, lat, and maxDistance query parameters are required"
         });
         return;
     }
+    var point = {
+        type: "Point",
+        coordinates: [lng, lat]
+    };
+    // Spherical true uses meters instead of radians thus we need to convert
+    // km to Meters and back.
+    var geoOptions = {
+        spherical: true,
+        maxDistance: meterConversion.kmToM(maxDistance),
+        num: 10
+    };
     Loc.geoNear(point, geoOptions, function(err, results, stats) {
         var locations;
         if (err) {
