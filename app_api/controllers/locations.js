@@ -60,7 +60,7 @@ module.exports.locationsListByDistance = function(req, res) {
     //     maxDistance: theEarth.getRadsFromDistance(maxDistance),
     //     limit: 10
     // };
-    if (!lng || !lat || !maxDistance) {
+    if ((!lng && lng !== 0) || (!lat && lat !== 0) || (!maxDistance && maxDistance !==0)) {
         sendJsonResponse(res, 404, {
             "message": "lng, lat, and maxDistance query parameters are required"
         });
